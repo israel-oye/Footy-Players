@@ -1,16 +1,21 @@
-import time
-import requests
 import json
+import os
 
+import requests
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
+load_dotenv()
 
-service = Service(r"C:\Users\OLUWAPELUMI\Documents\Python codes\Footy Pic\chromedriver.exe")
+service_path = os.getenv("CHROME_DRIVER_PATH")
+BASE_URL = os.getenv("BASE_URL")
+
+service = Service(service_path)
 driver = webdriver.Chrome(service=service)
-PLAYERS_API_ENDPOINT = "https://api.npoint.io/483e026bce6c25d2041d"
-UPDATE_ENDPOINT = "https://api.npoint.io/ab0d985e937ec02b5021"
+PLAYERS_API_ENDPOINT = f"{BASE_URL}/483e026bce6c25d2041d"
+UPDATE_ENDPOINT = f"{BASE_URL}/ab0d985e937ec02b5021"
 
 resp = requests.get(PLAYERS_API_ENDPOINT, headers={"Content-Type": "application/json"}).json()
 
@@ -21,7 +26,6 @@ for player in resp["players"]:
     url = "https://www.google.com/search?q="+query+"&source=lnms&tbm=isch"
     driver.get(url=url)
 
-    # time.sleep(2)
 
     image = driver.find_element(by=By.CSS_SELECTOR, value=".rg_i.Q4LuWd")
     image_url = image.get_attribute("src")
@@ -38,8 +42,8 @@ for player in resp["players"]:
 
 updated_players_json = json.dumps({"players": updated_players})
 
-resp2 = requests.post(url=UPDATE_ENDPOINT, data=updated_players_json)
-if resp2.status_code == 200:
+update_response = requests.post(url=UPDATE_ENDPOINT, data=updated_players_json)
+if update_response.status_code == 200:
     print("\nSuccess running script.")
 
 

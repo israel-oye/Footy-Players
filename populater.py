@@ -5,10 +5,12 @@ import requests
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
+from .crawler import BASE_URL
+
 load_dotenv()
 
 CONNECTION_STRING = os.getenv("MONGO_CONNECTION_STRING")
-API_ENDPOINT = "https://api.npoint.io/ab0d985e937ec02b5021"
+API_ENDPOINT = f"{BASE_URL}/ab0d985e937ec02b5021"
 
 def get_players():
     resp = requests.get(API_ENDPOINT).json()
